@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
- 
+
 
 
 
@@ -55,77 +55,75 @@
         /* Azul claro */
     }
 
-html, body, #containerb {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
+    html,
+    body,
+    #containerb {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
 
-#div_generoxv {
-    width: 50%;
-    height: 50%;
-    margin: 0;
-    padding: 0;
-}
+    #div_generoxv {
+        width: 50%;
+        height: 50%;
+        margin: 0;
+        padding: 0;
+    }
 
-#div_uor {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
+    #div_uor {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
 
-.highcharts-figure,
-.highcharts-data-table table {
-    min-width: 320px;
-    max-width: 700px;
-    margin: 1em auto;
-}
+    .highcharts-figure,
+    .highcharts-data-table table {
+        min-width: 320px;
+        max-width: 700px;
+        margin: 1em auto;
+    }
 
-.highcharts-data-table table {
-    font-family: Verdana, sans-serif;
-    border-collapse: collapse;
-    border: 1px solid #ebebeb;
-    margin: 10px auto;
-    text-align: center;
-    width: 100%;
-    max-width: 500px;
-}
+    .highcharts-data-table table {
+        font-family: Verdana, sans-serif;
+        border-collapse: collapse;
+        border: 1px solid #ebebeb;
+        margin: 10px auto;
+        text-align: center;
+        width: 100%;
+        max-width: 500px;
+    }
 
-.highcharts-data-table caption {
-    padding: 1em 0;
-    font-size: 1.2em;
-    color: #555;
-}
+    .highcharts-data-table caption {
+        padding: 1em 0;
+        font-size: 1.2em;
+        color: #555;
+    }
 
-.highcharts-data-table th {
-    font-weight: 600;
-    padding: 0.5em;
-}
+    .highcharts-data-table th {
+        font-weight: 600;
+        padding: 0.5em;
+    }
 
-.highcharts-data-table td,
-.highcharts-data-table th,
-.highcharts-data-table caption {
-    padding: 0.5em;
-}
+    .highcharts-data-table td,
+    .highcharts-data-table th,
+    .highcharts-data-table caption {
+        padding: 0.5em;
+    }
 
-.highcharts-data-table thead tr,
-.highcharts-data-table tr:nth-child(even) {
-    background: #f8f8f8;
-}
+    .highcharts-data-table thead tr,
+    .highcharts-data-table tr:nth-child(even) {
+        background: #f8f8f8;
+    }
 
-.highcharts-data-table tr:hover {
-    background: #f1f7ff;
-}
-
-
-
-
+    .highcharts-data-table tr:hover {
+        background: #f1f7ff;
+    }
 </style>
 
- 
- 
+
+
 
 @section('content')
 
@@ -136,6 +134,19 @@ html, body, #containerb {
 
 <section class="content container-fluid">
 
+
+<div class="col-md-8" style="margin-top: 5px; margin-bottom: 5px; padding: 60px;">
+        <div class="panel panel-default" style="margin-top: 5px; margin-bottom: 5px ">
+            <div class="panel-heading"><b>Altas por mes</b>
+            </div>
+            <div class="panel-body">
+                <canvas id="canvasaltasbajas" height="580" width="1200"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- @include('flash::message') -->
 
 
@@ -145,14 +156,22 @@ html, body, #containerb {
 
 
     <figure class="highcharts-figure">
-    <div id="container"></div>
+        <div id="container"></div>
 
-</figure>
-
-
+    </figure>
 
 
-<div id="div_generoxv"></div>
+
+
+
+
+
+
+
+
+
+
+    <div id="div_generoxv"></div>
 
 
 
@@ -196,7 +215,7 @@ html, body, #containerb {
  -->
 
 
-  
+
 
 
 
@@ -207,6 +226,95 @@ html, body, #containerb {
 
 
 
+
+
+
+
+
+
+<script>
+    var url = "{{url('http://localhost:3000/altasbajas/202301/202306')}}";
+ 
+
+    var etiquetas = [];
+    var altas = [];
+    var bajas = [];
+
+
+ 
+    var cantidades = [];
+ 
+
+    $(document).ready(function() {
+
+        console.log('entra a canvasaltasbajas');
+        $.get(url, function(response) {
+
+            const rowsData = response.rows; // Accede al array de objetos
+
+            rowsData.forEach(function(row) {
+                console.log('data:', row);
+                etiquetas.push(row.PERIODO); // Cambio en la etiqueta
+                altas.push(row.ALEX_ALTAS);
+                bajas.push(row.ALEX_BAJAS);
+                // cantidades.push(row.ALEX_ALTAS); // Cambio en la cantidad
+            });
+
+
+
+            var ctx = document.getElementById("canvasaltasbajas").getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                // data: {
+                //     labels: etiquetas,
+                //     datasets: [{
+                //         label: 'Altas (ALEX_ALTAS)',
+                //         data: cantidades,
+                //         backgroundColor: '#33ECFF',
+                //         hoverBackgroundColor: '#3196C5',
+                //         borderColor: '#000000',
+                //         borderWidth: 2
+                //     }]
+                // },
+
+                data: {
+                    labels: etiquetas,
+                    datasets: [{
+                        label: 'Altas (ALEX_ALTAS)',
+                        data: altas,
+                        backgroundColor: '#33ECFF',
+                        hoverBackgroundColor: '#3196C5',
+                        borderColor: '#000000',
+                        borderWidth: 2
+                    }, {
+                        label: 'Bajas (ALEX_BAJAS)',
+                        data: bajas,
+                        backgroundColor: '#FF5733',
+                        hoverBackgroundColor: '#C53126',
+                        borderColor: '#000000',
+                        borderWidth: 2
+                    }]
+                },
+
+
+
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Altas por Periodo'
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+    });
+</script>
 
 
 
@@ -297,7 +405,7 @@ html, body, #containerb {
 
 
 
- 
+
 
 
 <!-- FIN UOR -->
@@ -323,156 +431,150 @@ html, body, #containerb {
 // Define una función para cargar y mostrar el nuevo gráfico
 
 <script>
+    function showAnotherChart(selectedUOR) {
+        // Realiza una llamada a la API con el UOR seleccionado
+        //console.log('showAnotherChart ', 'http://localhost:8000/uor-explode/' + selectedUOR);
+        fetch('http://localhost:8000/uor-explode/' + selectedUOR) // Reemplaza 'uor' con la URL correcta de tu API Laravel
+            .then(response => response.json())
+            .then(jsonData => {
+                // Convertir los datos para usarlos en el nuevo gráfico
+                var newData = jsonData.map((item, index) => ({
+                    name: item.uor,
+                    value: item.cantidad,
+                    colorValue: index, // Usamos el índice como valor de color
+                    color: getColorForIndex(index) // Obtener color basado en el índice
+                }));
 
-function showAnotherChart(selectedUOR) {
-    // Realiza una llamada a la API con el UOR seleccionado
-    //console.log('showAnotherChart ', 'http://localhost:8000/uor-explode/' + selectedUOR);
-    fetch('http://localhost:8000/uor-explode/' + selectedUOR) // Reemplaza 'uor' con la URL correcta de tu API Laravel
-        .then(response => response.json())
-        .then(jsonData => {
-            // Convertir los datos para usarlos en el nuevo gráfico
-            var newData = jsonData.map((item, index) => ({
-                name: item.uor,
-                value: item.cantidad,
-                colorValue: index, // Usamos el índice como valor de color
-                color: getColorForIndex(index) // Obtener color basado en el índice
-            }));
 
-
-            // Función para obtener colores basados en el índice
-            function getColorForIndex(index) {
-                var colors = ['#008B8B','#8A2BE2','#FF1493', '#00BFFF', '#808080', '#00FF00', '#FFD700'];
-                return colors[index % colors.length]; // Cicla a través de los colores
-            }            
-
-            // Crear el nuevo gráfico TreeMap
-            Highcharts.chart('container', {
-                colorAxis: {
-                    minColor: '#FFFFFF',
-                    maxColor: Highcharts.getOptions().colors[0]
-                },
-                series: [{
-                    type: 'treemap',
-                    layoutAlgorithm: 'squarified',
-                    clip: false,
-                    data: newData,
-                    title: {
-                        text: 'Planta Total distribuída por UOR: ' + selectedUOR
-                    }
-                }],
-                title: {
-                    text: 'Planta distribuída por UOR:'+ selectedUOR
+                // Función para obtener colores basados en el índice
+                function getColorForIndex(index) {
+                    var colors = ['#008B8B', '#8A2BE2', '#FF1493', '#00BFFF', '#808080', '#00FF00', '#FFD700'];
+                    return colors[index % colors.length]; // Cicla a través de los colores
                 }
-            });
 
-
-
-            
-
-
-        })
-        .catch(error => console.error('Error al obtener los datos desde la API:', error));
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Obtener los datos desde la API REST en Laravel
-    fetch('http://localhost:8000/uor')
-        .then(response => response.json())
-        .then(jsonData => {
-            // Convertir los datos para usarlos en el gráfico
-            var data = jsonData.map((item, index) => ({
-                name: item.uor,
-                value: item.cantidad,
-                colorValue: index, // Usamos el índice como valor de color
-                color: getColorForIndex(index) // Obtener color basado en el índice
-            }));
-
-            // Función para obtener colores basados en el índice
-            function getColorForIndex(index) {
-                var colors = ['#008B8B','#8A2BE2','#FF1493', '#00BFFF', '#808080', '#00FF00', '#FFD700'];
-                return colors[index % colors.length]; // Cicla a través de los colores
-            }
-
-            // Crear el gráfico TreeMap
-            Highcharts.chart('container', {
-                colorAxis: {
-                    minColor: '#FFFFFF',
-                    maxColor: Highcharts.getOptions().colors[0]
-                },
-                series: [{
-                    type: 'treemap',
-                    layoutAlgorithm: 'squarified',
-                    clip: false,
-                    data: data,
-                    events: {
-                        click: function(event) {
-                            // Obtener el UOR seleccionado
-                            var selectedUOR = event.point.name;
-
-                            //alert('Clic en el sector: ' +  selectedUOR );                            
-
-                            // Llamar a la función para mostrar el nuevo gráfico
-                            showAnotherChart(selectedUOR);
+                // Crear el nuevo gráfico TreeMap
+                Highcharts.chart('container', {
+                    colorAxis: {
+                        minColor: '#FFFFFF',
+                        maxColor: Highcharts.getOptions().colors[0]
+                    },
+                    series: [{
+                        type: 'treemap',
+                        layoutAlgorithm: 'squarified',
+                        clip: false,
+                        data: newData,
+                        title: {
+                            text: 'Planta Total distribuída por UOR: ' + selectedUOR
                         }
+                    }],
+                    title: {
+                        text: 'Planta distribuída por UOR:' + selectedUOR
                     }
-                }],
-                title: {
-                    text: 'Planta Total distribuída por UOR:'
-                }
-            });
-        })
-        .catch(error => console.error('Error al obtener los datos desde la API:', error));
-});
+                });
 
+
+
+
+
+
+            })
+            .catch(error => console.error('Error al obtener los datos desde la API:', error));
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Obtener los datos desde la API REST en Laravel
+        fetch('http://localhost:8000/uor')
+            .then(response => response.json())
+            .then(jsonData => {
+                // Convertir los datos para usarlos en el gráfico
+                var data = jsonData.map((item, index) => ({
+                    name: item.uor,
+                    value: item.cantidad,
+                    colorValue: index, // Usamos el índice como valor de color
+                    color: getColorForIndex(index) // Obtener color basado en el índice
+                }));
+
+                // Función para obtener colores basados en el índice
+                function getColorForIndex(index) {
+                    var colors = ['#008B8B', '#8A2BE2', '#FF1493', '#00BFFF', '#808080', '#00FF00', '#FFD700'];
+                    return colors[index % colors.length]; // Cicla a través de los colores
+                }
+
+                // Crear el gráfico TreeMap
+                Highcharts.chart('container', {
+                    colorAxis: {
+                        minColor: '#FFFFFF',
+                        maxColor: Highcharts.getOptions().colors[0]
+                    },
+                    series: [{
+                        type: 'treemap',
+                        layoutAlgorithm: 'squarified',
+                        clip: false,
+                        data: data,
+                        events: {
+                            click: function(event) {
+                                // Obtener el UOR seleccionado
+                                var selectedUOR = event.point.name;
+
+                                //alert('Clic en el sector: ' +  selectedUOR );                            
+
+                                // Llamar a la función para mostrar el nuevo gráfico
+                                showAnotherChart(selectedUOR);
+                            }
+                        }
+                    }],
+                    title: {
+                        text: 'Planta Total distribuída por UOR:'
+                    }
+                });
+            })
+            .catch(error => console.error('Error al obtener los datos desde la API:', error));
+    });
 </script>
 
 
 <script>
+    anychart.onDocumentReady(function() {
+        // create pie chart
+        var chart = anychart.pie();
 
-anychart.onDocumentReady(function() {
-    // create pie chart
-    var chart = anychart.pie();
+        // set chart title
+        chart.title('Distribución por Género');
 
-    // set chart title
-    chart.title('Distribución por Género');
+        // Obtener los datos desde la API REST en Laravel
+        fetch('http://localhost:8000/generoxv') // Reemplaza 'generoxv' con la URL correcta de tu API Laravel
+            .then(response => response.json())
+            .then(jsonData => {
+                // Convertir los datos para usarlos en el chart
+                var chartData = jsonData.map(item => ({
+                    x: item.x,
+                    value: item.value
+                }));
 
-    // Obtener los datos desde la API REST en Laravel
-    fetch('http://localhost:8000/generoxv')  // Reemplaza 'generoxv' con la URL correcta de tu API Laravel
-        .then(response => response.json())
-        .then(jsonData => {
-            // Convertir los datos para usarlos en el chart
-            var chartData = jsonData.map(item => ({ x: item.x, value: item.value }));
+                // set chart data
+                chart.data(chartData);
 
-            // set chart data
-            chart.data(chartData);
+                // Asignar colores personalizados a los sectores
+                chart.palette(['#FF1493', '#00BFFF', '#808080']); // Rosa, Azul, Gris
 
-            // Asignar colores personalizados a los sectores
-            chart.palette(['#FF1493', '#00BFFF', '#808080']); // Rosa, Azul, Gris
-
-             // Agregar un evento de clic a los sectores
-             chart.listen('pointClick', function(e) {
-                var point = e.point;
-                alert('Clic en el sector: ' + point.x + ', Valor: ' + point.value);
-            });
-            
-
-            // set container id for the chart
-            chart.container('div_generoxv');
-
-            // initiate chart drawing
-            chart.draw();
-        })
-        .catch(error => console.error('Error al obtener los datos desde la API:', error));
-});
+                // Agregar un evento de clic a los sectores
+                chart.listen('pointClick', function(e) {
+                    var point = e.point;
+                    alert('Clic en el sector: ' + point.x + ', Valor: ' + point.value);
+                });
 
 
+                // set container id for the chart
+                chart.container('div_generoxv');
+
+                // initiate chart drawing
+                chart.draw();
+            })
+            .catch(error => console.error('Error al obtener los datos desde la API:', error));
+    });
 </script>
 
 
 
 
 @endsection
-
-
-
-
